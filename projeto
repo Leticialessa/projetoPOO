@@ -1,0 +1,181 @@
+package com.mycompany.mortalcombatell;
+
+public class MortalcombateLL {
+    private Arena arena;
+    private Luta luta;
+
+    public MortalcombateLL() {
+        this.arena = new Arena("Coliseu");
+        Personagem p1 = new Personagem("FelipeCueca", 100);
+        Personagem p2 = new Personagem("WilliamCalcinha", 140);
+        this.luta = new Luta(p1, p2);
+    }
+
+    public void iniciar() {
+        System.out.println("Bem-vindo ao Mortal Kombat!");
+        System.out.println("Arena: " + arena.getNome());
+        luta.iniciarLuta();
+    }
+
+    public static void main(String[] args) {
+        MortalcombateLL jogo = new MortalcombateLL();
+        jogo.iniciar();
+    }
+}
+
+////////////////////////////////////////////////////////////////////
+
+package com.mycompany.mortalcombatell;
+import java.util.Scanner;
+
+public class Luta {
+    private Personagem lutador1;
+    private Personagem lutador2;
+    private Scanner scanner;
+
+    public Luta(Personagem lutador1, Personagem lutador2) {
+        this.lutador1 = lutador1;
+        this.lutador2 = lutador2;
+        this.scanner = new Scanner(System.in);
+    }
+
+    public void iniciarLuta() {
+        System.out.println("Luta iniciada entre " + lutador1.getNome() + " e " + lutador2.getNome());
+        System.out.println("-------------------------------------");
+
+        Personagem atacante = lutador1;
+        Personagem defensor = lutador2;
+
+        while (lutador1.getVida() > 0 && lutador2.getVida() > 0) {
+            System.out.println(atacante.getNome() + ", o que deseja?");
+            System.out.println("1 - Atacar");
+            System.out.println("2 - Defender");
+            System.out.println("3 - Usar Poção de vida");
+            System.out.print("Opção: ");
+            int opcao = scanner.nextInt();
+
+            if (opcao == 1) {
+                int dano = atacante.atacar();
+                System.out.println(atacante.getNome() + " atacou com " + dano + " de dano!");
+
+                System.out.println(defensor.getNome() + ", deseja defender? (s/n): ");
+                String resposta = scanner.next();
+
+                if (resposta.equalsIgnoreCase("s")) {
+                    defensor.defender(dano);
+                } else {
+                    defensor.receberDano(dano);
+                    System.out.println(defensor.getNome() + " recebeu " + dano + " de dano.");
+                }
+
+            } else if (opcao == 2) {
+                System.out.println(atacante.getNome() + " está se defendendo nesse turno. Passa a vez.");
+            } else if (opcao == 3) {
+                atacante.usarPocao();
+            } else {
+                System.out.println("Opção inválida, pulando turno.");
+            }
+
+            System.out.println(lutador1.getNome() + " tem " + lutador1.getVida() + " de vida.");
+            System.out.println(lutador2.getNome() + " tem " + lutador2.getVida() + " de vida.");
+            System.out.println("-------------------------------------");
+
+            Personagem temp = atacante;
+            atacante = defensor;
+            defensor = temp;
+        }
+
+        if (lutador1.getVida() <= 0 && lutador2.getVida() <= 0) {
+            System.out.println("Empate!");
+        } else if (lutador1.getVida() <= 0) {
+            System.out.println(lutador2.getNome() + " venceu a luta!");
+        } else {
+            System.out.println(lutador1.getNome() + " venceu a luta!");
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////
+package com.mycompany.mortalcombatell;
+
+public class Personagem {
+    private String nome;
+    private int vida;
+    private int vidaMaxima;
+
+    public Personagem(String nome, int vida) {
+        this.nome = nome;
+        this.vida = vida;
+        this.vidaMaxima = vida;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public int atacar() {
+        return 20;
+    }
+
+    public void defender(int dano) {
+        int danoReduzido = dano / 2;
+        this.vida -= danoReduzido;
+        System.out.println(nome + " defendeu e recebeu " + danoReduzido + " de dano.");
+        if (this.vida < 0) this.vida = 0;
+    }
+    
+    public void receberDano(int dano) {
+        this.vida -= dano;
+        if (this.vida < 0) this.vida = 0;
+    }
+
+    public void usarPocao() {
+        int cura = 15;
+        this.vida += cura;
+        if (this.vida > vidaMaxima) {
+            this.vida = vidaMaxima;
+        }
+        System.out.println(nome + " usou uma poção e recuperou " + cura + " pontos de vida!");
+        System.out.println(nome + " agora tem " + this.vida + " de vida.");
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+package com.mycompany.mortalcombatell;
+
+public class Arena {
+    private String nome;
+
+    public Arena(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////
+package com.mycompany.mortalcombatell;
+
+public class Golpe {
+    private String nome;
+    private int dano;
+
+    public Golpe(String nome, int dano) {
+        this.nome = nome;
+        this.dano = dano;
+    }
+
+    public int getDano() {
+        return dano;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+}
